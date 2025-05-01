@@ -140,7 +140,7 @@ jobs:
           dotnet nuget add source https://nuget.pkg.github.com/andresebast161616/index.json \
             --name "github" \
             --username "andresebast161616" \
-            --password "${{ secrets.GH_PACKAGES_TOKEN }}" \
+            --password "${{ secrets.GH_PACKAGES_TOKENNN }}" \
             --store-password-in-clear-text
 
       - name: Publicar paquete Payment.Domain en GitHub Packages
@@ -148,7 +148,7 @@ jobs:
           cd Payment/Payment.Domain
           dotnet nuget push "./nupkg/*.nupkg" \
             --source "github" \
-            --api-key "${{ secrets.GH_PACKAGES_TOKEN }}" \
+            --api-key "${{ secrets.GH_PACKAGES_TOKENNN }}" \
             --skip-duplicate
 
       - name: Publicar Payment.Domain a NuGet.org (opcional)
@@ -196,7 +196,7 @@ jobs:
           dotnet nuget add source https://nuget.pkg.github.com/andresebast161616/index.json \
             --name "github" \
             --username "andresebast161616" \
-            --password "${{ secrets.GH_PACKAGES_TOKEN }}" \
+            --password "${{ secrets.GH_PACKAGES_TOKENNN }}" \
             --store-password-in-clear-text
 
       - name: Publicar paquete ATM.Domain en GitHub Packages
@@ -204,7 +204,7 @@ jobs:
           cd ATM/ATM.Domain
           dotnet nuget push "./nupkg/*.nupkg" \
             --source "github" \
-            --api-key "${{ secrets.GH_PACKAGES_TOKEN }}" \
+            --api-key "${{ secrets.GH_PACKAGES_TOKENNN }}" \
             --skip-duplicate
 
       - name: Publicar ATM.Domain a NuGet.org (opcional)
