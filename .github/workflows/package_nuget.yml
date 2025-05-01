@@ -207,11 +207,3 @@ jobs:
             --api-key "${{ secrets.GH_PACKAGES_TOKENNN }}" \
             --skip-duplicate
 
-      - name: Publicar ATM.Domain a NuGet.org (opcional)
-        run: |
-          cd ATM/ATM.Domain
-          dotnet nuget push "./nupkg/*.nupkg" \
-            --source "https://api.nuget.org/v3/index.json" \
-            --api-key "${{ secrets.NUGET_API_KEY }}" \
-            --skip-duplicate
-
