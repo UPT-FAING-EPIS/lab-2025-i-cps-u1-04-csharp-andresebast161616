@@ -20,16 +20,21 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Add GitHub NuGet source
-        run: dotnet nuget add source --username "${{ github.actor }}" --password "${{ secrets.GITHUB_TOKEN }}" --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+        run: dotnet nuget add source \
+          --username "${{ github.actor }}" \
+          --password "${{ secrets.GITHUB_TOKEN }}" \
+          --store-password-in-clear-text \
+          --name github \
+          "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - name: Restore dependencies
-        run: dotnet restore lab-2025-i-cps-u1-04-csharp-andresebast161616.sln
-
-      - name: Build solution
-        run: dotnet build lab-2025-i-cps-u1-04-csharp-andresebast161616.sln --configuration Release --no-restore
+        run: |
+          dotnet restore Payment/Payment.Domain/Payment.Domain.csproj
+          dotnet restore ATM/ATM.Domain/ATM.Domain.csproj
 
       - name: Run tests with coverage
-        run: dotnet test --no-restore --collect:"XPlat Code Coverage" --logger "trx"
+        run: |
+          dotnet test Payment/Payment.Domain/Payment.Domain.csproj --no-restore --collect:"XPlat Code Coverage" --logger "trx"
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
@@ -39,6 +44,11 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+
+      - name: Build projects
+        run: |
+          dotnet build Payment/Payment.Domain/Payment.Domain.csproj --configuration Release
+          dotnet build ATM/ATM.Domain/ATM.Domain.csproj --configuration Release
 
       - name: Pack NuGet packages
         run: |
