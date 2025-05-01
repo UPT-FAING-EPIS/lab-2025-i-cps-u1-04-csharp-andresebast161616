@@ -103,7 +103,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           DOTNET_ROOT: /usr/share/dotnet
 
-
   publish-nuget-payment:
     needs: build-test-analyze-atm
     runs-on: ubuntu-latest
