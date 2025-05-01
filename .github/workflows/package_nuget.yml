@@ -1,0 +1,60 @@
+name: Build, Test, Analyze and Package
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Authenticate with GitHub Packages
+        run: |
+          echo "//nuget.pkg.github.com/${{ github.repository_owner }}/index.json" > ~/.nuget/NuGet/NuGet.Config
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Run tests with coverage
+        run: dotnet test --no-restore --collect:"XPlat Code Coverage" --logger "trx"
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: .
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+
+      - name: Build projects
+        run: |
+          dotnet build Payment/Payment.Domain/Payment.Domain.csproj --configuration Release
+          dotnet build ATM/ATM.Domain/ATM.Domain.csproj --configuration Release
+
+      - name: Pack NuGet packages
+        run: |
+          dotnet pack Payment/Payment.Domain/Payment.Domain.csproj --configuration Release --output ./nupkgs
+          dotnet pack ATM/ATM.Domain/ATM.Domain.csproj --configuration Release --output ./nupkgs
+
+      - name: Publish to GitHub Packages
+        run: |
+          for file in ./nupkgs/*.nupkg; do
+            dotnet nuget push "$file" \
+              --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+              --api-key "${{ secrets.GITHUB_TOKEN }}" \
+              --skip-duplicate
+          done
