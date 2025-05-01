@@ -92,7 +92,7 @@ jobs:
           name: coverage-report-atm
           path: coverage-report-atm
 
-      - name: SonarCloud Scan for ATM.Domain
+      - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: .
@@ -101,6 +101,8 @@ jobs:
             -Dsonar.organization=andresebast161616
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          DOTNET_ROOT: /usr/share/dotnet
+
 
   publish-nuget-payment:
     needs: build-test-analyze-atm
