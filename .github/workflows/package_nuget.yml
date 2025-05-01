@@ -19,11 +19,12 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Authenticate with GitHub Packages
-        run: |
-          echo "//nuget.pkg.github.com/${{ github.repository_owner }}/index.json" > ~/.nuget/NuGet/NuGet.Config
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Add GitHub NuGet source
+        run: dotnet nuget add source \
+          --username ${{ github.actor }} \
+          --password ${{ secrets.GITHUB_TOKEN }} \
+          --store-password-in-clear-text \
+          --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - name: Restore dependencies
         run: dotnet restore
